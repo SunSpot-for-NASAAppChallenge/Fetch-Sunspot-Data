@@ -104,7 +104,9 @@ app.fetch = {
     updateNumItems(){
         this.numItemsLoaded++;
         if(this.numItemsLoaded >= this.itemsExpected){
-            this.returnResults(this.result);
+            if(this.returnResults != undefined){
+                this.returnResults(this.result);
+            }
         }
     },
     
