@@ -12,7 +12,8 @@ app.fetch = {
     ///////////////////////FIELDS///////////////////////
     location: Object.seal({
         city: "Rochester",
-        state: "NY"
+        state: "NY",
+        noaa_station: "9052058"
     }),
     //Lists all the sites we are getting data from
     //For each site there are the following parameters:
@@ -29,6 +30,12 @@ app.fetch = {
             callback: undefined, //This must be set in setup
             key: "eae1d0e8e3975649ee03a83327f96fcf"
         })
+        /*tidesAndCurrents: Object.seal({
+            dataType: "jsonp",
+            url: "https://tidesandcurrents.noaa.gov/api/datagetter?date=today&station=",
+            format: "[url] [station] &product=water_level&datum=STND&units=metric&time_zone=gmt&application=web_services&format=xml",
+            callback: undefined
+        })*/
     }),
     
     result: Object.seal({
@@ -51,6 +58,7 @@ app.fetch = {
     //Completes any initialization for the project
     setup: function(){
         this.sites.weather.callback = this.processWeather.bind(this);
+        //this.sites.tidesAndCurrents.callback = this.processTides.bind(this);
     },
     
     //Fetches the data for the project
@@ -58,7 +66,7 @@ app.fetch = {
         this.reset();
         
         this.retrieveData(this.sites.weather);
-        
+        //this.retrieveData(this.sites.tidesAndCurrents);
     },
     
     //Clears result and numItemsLoaded
@@ -82,6 +90,8 @@ app.fetch = {
                 case "[city]":
                     url += this.location.city;
                     break;
+                case "[station]":
+                    url += this.location.noaa_station;
                 case "[key]":
                     url += site.key;
                     break;
@@ -91,11 +101,13 @@ app.fetch = {
             }
         }
         
+        var callback = (site.callback?site.callback:this.dataLoaded);
+        
         $.ajax({
             dataType: site.dataType,
             url: url,
             data: null,
-            success: site.callback
+            success: callback
         })
     },
     
@@ -121,4 +133,18 @@ app.fetch = {
         this.updateNumItems();
     },
     
+     processTides: function(obj){
+        console.dir(obj);
+    
+        console.log("Tides loaded!");
+        
+        this.updateNumItems();
+    },
+    
+    dataLoaded: function(obj){
+        console.log("Data loaded!");
+        console.dir(obj);
+        
+        this.updateNumItems();
+    }
 };
