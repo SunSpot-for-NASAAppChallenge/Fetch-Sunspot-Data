@@ -12,8 +12,14 @@ app.main = {
     fetch: undefined,
     
     setup: function(){
-        var response = this.fetch.sunspotResponse();
+        this.fetch.returnResults = this.displayTestResults;
+        this.fetch.fetch.apply(this.fetch);
         
-        document.querySelector("#results").textContent = response;
+    },
+    
+    //Display results and display them in the console.
+    displayTestResults: function(result){
+        console.dir(result)
+        document.querySelector("#results").textContent = result;
     }
 };
